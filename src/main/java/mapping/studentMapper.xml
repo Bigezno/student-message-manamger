@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.StudentDao">  
+
+	<cache 	eviction="FIFO"    flushInterval="6000"  size="512"	/> 
+	
+	<sql id="studentAllMessage">s_id,name,password,sex,specialty,birthday,phone_number,address,email,course_id,class_id</sql>
+	<sql id="studentMessage">s_id,name,sex,specialty</sql>
+	
+	
+	<!-- 根据id值查询一个学生所有信息 -->
+	<select id="getStudent" parameterType="int"  resultType="Student">
+         select <include refid="studentAllMessage"/> from student where s_id=#{id}
+     </select>
+     
+     <!-- 添加一个学生 -->
+     <insert id="saveStudent" parameterType="Student" >
+     	insert into student(name,password,sex,specialty,birthday,phone_number,address,email) 
+     	values(#{name},#{password},#{sex},#{specialty},#{birthday},#{phone_number},#{address},#{email}) 
+     </insert>
+     
+     <!-- 删除一个学生 -->
+     <delete id="deleteStudent" parameterType="Student" >
+     	delete from student
+     	<where>
+     		<if test="name != null and !&quot;&quot;.euqals(name.trim())">
+     			and name = #{name}
+     		</if>
+     		<if test="id != 0">
+     			or id = #{id}
+     		</if>
+     	</where>
+     	
+     </delete>
+     
+     <!-- 修改一个学生 -->
+     <update id="updateStudent" parameterType="Student" >
+		update student set 
+		name=#{name},password=#{password},sex=#{sex},specialty=#{specialty},
+		birthday=#{birthday},phone_number=#{phone_number},address=#{address},email=#{email}    
+     </update>
+     
+     <!-- 查询所有用户 -->
+     <select id="getAllStudents"  resultType="Student">
+     	select <include refid="studentMessage"/> from Student
+     </select>
+     
+</mapper>

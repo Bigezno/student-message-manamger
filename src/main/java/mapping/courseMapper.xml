@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.CourseDao">  
+
+	<cache 	eviction="FIFO"    flushInterval="6000"  size="512"	/> 
+	
+	
+	<sql id="courseMessage">c_id,course_name,t_id,class_id,time,address</sql>
+	
+	<!-- 根据课程编号查找某个课程的信息:嵌套查询 -->
+	<select id="getCourse" parameterType="int" resultMap="courseResultMap" >
+		select <include refid="courseMessage"/> from course where c_id =#{id}
+	</select>
+	
+	<resultMap type="Course" id="courseResultMap">
+		<id property="c_id" column="c_id" />
+		<result property="course_name" column="course_name" />
+		<association property="teacher" column="t_id" select="getTeacher"/>
+		<association property="clazz" column="class_id" select="getClass"/>
+		<collection property="studentList" ofType="Student" column="c_id" select="getStudent"/>	
+	</resultMap>
+	
+	<select id="getTeacher" parameterType="int" resultMap="teahcerResultMap">
+		select * from teacher where t_id =#{id}  
+	</select>
+	<resultMap type="Teacher" id="teahcerResultMap">
+		<id property="id" column="t_id" />
+		<result property="name" column="t_name" />
+		<result property="c_id" column="c_id" />
+		<result property="password" column="password" />
+		<result property="email" column="email" />
+	</resultMap>
+	
+	<select id="getClass" parameterType="int" resultMap="classResultMap">
+		select * from class where class_id =#{id}  
+	</select>
+	<resultMap type="Class" id="classResultMap">
+		<id property="id" column="class_id" />
+		<result property="class_name" column="class_name" />
+	</resultMap>
+	
+	
+	<select id="getStudent" parameterType="int" resultType="Student">
+		select * from student where course_id = #{id} 
+	</select>
+	
+	
+	
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.SelectStudentDao">  
+
+	<cache 	eviction="FIFO"    flushInterval="6000"  size="512"	/> 
+	
+	
+	<!-- 学生选课 -->
+	<insert id="saveSelectStudent" parameterType="SelectStudent">
+		insert into selectstudent(s_id,select_course_id) values(#{s_id},#{select_course_id})
+	</insert>
+	
+	<!-- 老师添加成绩 -->
+	<update id="addStudentGrade" parameterType="SelectStudent">
+		update selectstudent set grade = #{grade} where s_id = #{s_id} and  select_course_id = #{select_course_id}
+	</update>
+	
+	
+	<!-- 学生查看选课成绩 -->
+	<select id="lookSelectCourseGrade" resultType="SelectStudent" parameterType="SelectStudent">
+		select grade from selectstudent where s_id = #{s_id} and select_course_id = #{select_course_id}
+	</select>
+		
+	
+	
+	
+	
+	
+</mapper>

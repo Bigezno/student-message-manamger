@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.TeacherDao">  
+
+	<cache 	eviction="FIFO"    flushInterval="6000"  size="512"	/> 
+	
+	<sql id="teacherAllMessage">t_id,t_name,c_id,password,email</sql>
+	
+	
+	<!-- 根据id值查询一个老师所有信息 -->
+	<select id="getTeacher" parameterType="int"  resultMap="getClass">
+         select <include refid="teacherAllMessage"/> from teacher where t_id=#{id}
+     </select>
+     
+     <resultMap type="Teacher" id="getClass">
+		<id property="id" column="t_id"/>
+		<result property="name" column="t_name"/>
+		<result property="c_id" column="c_id"/>
+		<result property="password" column="password"/>
+		<result property="email" column="email"/>
+	</resultMap>
+     
+     
+     <!-- 添加一个老师 -->
+     <insert id="saveTeacher" parameterType="Teacher" >
+     	insert into teacher(t_name,c_id,password,email) 
+     	values(#{name},#{c_id},#{password},#{email}) 
+     </insert>
+     
+     <!-- 删除一个学生 -->
+     <delete id="deleteTeacher" parameterType="Teacher" >
+     	delete from teacher
+     	<where>
+     		<if test="name != null and !&quot;&quot;.euqals(name.trim())">
+     			and t_name = #{name}
+     		</if>
+     		<if test="id != 0">
+     			or t_id = #{id}
+     		</if>
+     	</where>
+     	
+     </delete>
+     
+     <!-- 修改一个学生 -->
+     <update id="updateTeacher" parameterType="Teacher" >
+		update teacher set 
+		c_id=#{c_id},name=#{name},password=#{password},email=#{email}    
+     </update>
+     
+     <!-- 查询所有用户 -->
+     <select id="getAllTeachers"  resultMap="getClass">
+     	select <include refid="teacherAllMessage"/> from teacher
+     </select>
+     
+</mapper>

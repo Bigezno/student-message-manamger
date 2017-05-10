@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.SelectCourseDao">  
+
+	<cache 	eviction="FIFO"    flushInterval="6000"  size="512"	/> 
+	
+	
+	<sql id="courseMessage">id,course_name,teacher_id,time,address</sql>
+	
+	<!-- 根据课程编号查找某个课程的信息:嵌套查询 -->
+	<select id="getCourseMessage"  resultMap="courseResultMap" >
+		select <include refid="courseMessage"/> from selectcourse 
+	</select>
+	
+	<resultMap type="SelectCourse" id="courseResultMap">
+		<id property="id" column="id" />
+		<result property="course_name" column="course_name" />
+		<result property="time" column="time" />
+		<result property="address" column="address" />
+		<association property="teacher" column="teacher_id" select="getTeacher"/>
+		<collection property="list" ofType="Student" column="id" select="getStudent"/>	
+	</resultMap>
+	
+	<select id="getTeacher" parameterType="int" resultType="Teacher">
+		select t_id id, t_name name from teacher where t_id =#{id}  
+	</select>
+	
+	
+	<select id="getStudent" parameterType="int" resultType="Student">
+		select s.s_id,s.name,s.specialty from student s,select_student select_s where select_s.select_course_id = #{id} and select_s.s_id = s.s_id 
+	</select>
+	
+	
+	
+</mapper>
